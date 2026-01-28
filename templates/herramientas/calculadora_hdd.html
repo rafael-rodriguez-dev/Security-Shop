@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h2 class="h4 mb-0"><i class="bi bi-hdd-network"></i> Calculadora de Almacenamiento CCTV</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted text-center mb-4">
+                        Calcula el disco duro ideal para tu proyecto basándote en la compresión H.265+ (Estándar moderno).
+                    </p>
+
+                    <form id="calcForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="camaras" class="form-label fw-bold">Número de Cámaras</label>
+                                <input type="number" class="form-control" id="camaras" value="4" min="1">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="resolucion" class="form-label fw-bold">Resolución</label>
+                                <select class="form-select" id="resolucion">
+                                    <option value="1024">720p (1MP) - Económico</option>
+                                    <option value="2048" selected>1080p (2MP) - Estándar</option>
+                                    <option value="4096">4MP (2K) - Alta Definición</option>
+                                    <option value="8192">8MP (4K) - Ultra HD</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="dias" class="form-label fw-bold">Días de Grabación requeridos</label>
+                                <input type="number" class="form-control" id="dias" value="15" min="1">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="fps" class="form-label fw-bold">FPS (Cuadros por segundo)</label>
+                                <select class="form-select" id="fps">
+                                    <option value="0.5">15 FPS (Estándar CCTV)</option>
+                                    <option value="1">30 FPS (Fluido Real)</option>
+                                    <option value="2">60 FPS (Cámara Lenta)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="alert alert-warning mt-4 text-center" role="alert">
+                        <h5 class="alert-heading">Capacidad Necesaria Estimada:</h5>
+                        <h1 class="display-4 fw-bold" id="resultadoTB">0.00 TB</h1>
+                        <hr>
+                        <p class="mb-0" id="recomendacion">Selecciona tus parámetros...</p>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="#" class="btn btn-primary btn-lg">
+                            <i class="bi bi-cart-plus"></i> Ver Discos Duros Disponibles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Seleccionamos los elementos del DOM
+    const inputs = document.querySelectorAll('#camaras, #resolucion, #dias, #fps');
+    const displayTB = document.getElementById('resultadoTB');
+    const textRecomendacion = document.getElementById('recomendacion');
+
+    function calcular() {
+        // Obtenemos valores
+        let cams = document.getElementById('camaras').value;
+        let bitrateBase = document.getElementById('resolucion').value; // Bitrate base en Kbps
+        let dias = document.getElementById('dias').value;
+        let factorFPS = document.getElementById('fps').value;
+
+        // FÓRMULA DE INGENIERO:
+        // (Bitrate * Cams * FactorFPS * 3600seg * 24horas * Dias) / 8 (bits a bytes) / 1024^3 (a GB) / 1024 (a TB)
+        // Simplificado para H.265+: Asumimos un ahorro del 50% sobre H.264
+        
+        let totalBandwidthKbps = bitrateBase * cams * factorFPS;
+        let totalStorageGb = (totalBandwidthKbps * 3600 * 24 * dias) / 8 / 1000000;
+        let totalStorageTb = totalStorageGb / 1000;
+
+        // Actualizamos la vista
+        displayTB.innerText = totalStorageTb.toFixed(2) + " TB";
+
+        // Lógica de Venta Cruzada (Cross-Selling)
+        let sugerencia = "";
+        if(totalStorageTb < 1) sugerencia = "Un disco de 1TB es suficiente (WD Purple 10PURZ).";
+        else if(totalStorageTb < 2) sugerencia = "Te recomendamos ir por un disco de 2TB.";
+        else if(totalStorageTb < 4) sugerencia = "Necesitas un disco de 4TB para estar seguro.";
+        else sugerencia = "Proyecto grande. Considera 2 discos de 4TB o uno de 8TB.";
+        
+        textRecomendacion.innerText = sugerencia;
+    }
+
+    // Escuchamos cambios en cualquier input para recalcular al instante
+    inputs.forEach(input => {
+        input.addEventListener('input', calcular);
+        input.addEventListener('change', calcular);
+    });
+
+    // Calcular al cargar
+    calcular();
+</script>
+{% endblock %}

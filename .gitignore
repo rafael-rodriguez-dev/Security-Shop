@@ -1,0 +1,12 @@
+# Archivos de sistema y entorno
+__pycache__/
+*.pyc
+env/
+venv/
+.env
+
+# Base de datos local (¡No subir!)
+genesis.db
+
+# Configuración con claves (¡No subir si tiene datos reales!)
+config.py

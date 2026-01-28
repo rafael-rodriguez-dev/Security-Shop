@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="card border-0 shadow-lg mx-auto" style="max-width: 700px;">
+        <div class="card-body p-5">
+            <div class="mb-4">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+            </div>
+            
+            <h1 class="display-5 fw-bold mb-3">¡Pedido Confirmado!</h1>
+            <p class="lead text-muted">Gracias, <strong>{{ cliente.nombre }}</strong>.</p>
+
+            {% if factura and not factura.error %}
+            <div class="alert alert-info mt-4 text-start">
+                <h5 class="alert-heading"><i class="bi bi-receipt"></i> Factura Electrónica Generada</h5>
+                <p class="mb-1"><strong>No. Factura:</strong> {{ factura.numero }}</p>
+                <p class="mb-1 small text-muted text-break"><strong>CUFE:</strong> {{ factura.cufe }}</p>
+                <hr>
+                <div class="text-center">
+                    <p class="mb-2">Escanea para ver en la DIAN:</p>
+                    <a href="{{ factura.qr }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-qr-code"></i> Ver Factura DIAN
+                    </a>
+                </div>
+            </div>
+            {% elif factura and factura.error %}
+            <div class="alert alert-warning mt-4">
+                <i class="bi bi-exclamation-triangle"></i> {{ factura.mensaje }}
+            </div>
+            {% endif %}
+            
+            <div class="mt-4 d-grid gap-2 col-8 mx-auto">
+                <a href="/" class="btn btn-dark btn-lg">Volver a la Tienda</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

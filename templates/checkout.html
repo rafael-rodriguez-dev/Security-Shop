@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-lines-fill"></i> Datos de Facturación</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('confirmar_pedido') }}" method="POST" class="needs-validation">
+                        
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="nombre" class="form-label fw-bold">Nombre Completo o Razón Social</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Juan Pérez o Genesis SAS" required>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label for="tipo_doc" class="form-label fw-bold">Tipo Documento</label>
+                                <select class="form-select" id="tipo_doc" name="tipo_doc" required>
+                                    <option value="13">Cédula de Ciudadanía</option>
+                                    <option value="31">NIT</option>
+                                    <option value="42">Documento Extranjero</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-7">
+                                <label for="documento" class="form-label fw-bold">Número de Documento</label>
+                                <input type="text" class="form-control" id="documento" name="documento" placeholder="Sin puntos ni guiones" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="email" class="form-label fw-bold">Correo Electrónico (Para factura electrónica)</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="usuario@ejemplo.com" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="direccion" class="form-label fw-bold">Dirección de Entrega</label>
+                                <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Calle 123 # 45-67" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label fw-bold">Celular</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                 <label for="ciudad" class="form-label fw-bold">Ciudad</label>
+                                 <input type="text" class="form-control" id="ciudad" name="ciudad" value="Soacha" required>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h4 class="mb-3">Método de Pago</h4>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Por ahora simularemos el pago para probar la facturación.
+                        </div>
+                        <div class="form-check">
+                            <input id="simulado" name="metodo_pago" type="radio" class="form-check-input" checked required>
+                            <label class="form-check-label" for="simulado">Simulación de Pago (Prueba)</label>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <button class="w-100 btn btn-success btn-lg fw-bold" type="submit">
+                            Confirmar Pedido <i class="bi bi-check-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 90px;">
+                <div class="card-body">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">Tu Pedido</span>
+                        <span class="badge bg-primary rounded-pill">{{ productos|length }}</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        {% for item in productos %}
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">{{ item.info.nombre }}</h6>
+                                <small class="text-muted">Cant: {{ item.cantidad }}</small>
+                            </div>
+                            <span class="text-muted">${{ "{:,.0f}".format(item.subtotal) }}</span>
+                        </li>
+                        {% endfor %}
+                        <li class="list-group-item d-flex justify-content-between bg-light">
+                            <span class="fw-bold text-success">Total a Pagar</span>
+                            <strong class="text-success">${{ "{:,.0f}".format(total) }}</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
